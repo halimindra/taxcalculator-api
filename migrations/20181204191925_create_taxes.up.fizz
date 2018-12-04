@@ -1,0 +1,6 @@
+create_table("taxes") {
+	t.Column("id", "integer", {primary: true})
+	t.Column("name", "string", {})
+	t.Column("tax_code", "string", {})
+	t.Column("price", "decimal", {})
+}
