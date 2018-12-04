@@ -60,6 +60,14 @@ func App() *buffalo.App {
 
 		app.GET("/", HomeHandler)
 
+		// routes for /taxes
+		tr := &TaxesResource{}
+		gt := app.Group("/taxes")
+		gt.GET("/", tr.List).Name("taxesPath")
+		gt.GET("/{tax_id}", tr.Show).Name("taxPath")
+		gt.POST("/", tr.Create).Name("taxesPath")
+		gt.PUT("/{tax_id}", tr.Update).Name("taxPath")
+		gt.DELETE("/{tax_id}", tr.Destroy).Name("taxPath")
 	}
 
 	return app
