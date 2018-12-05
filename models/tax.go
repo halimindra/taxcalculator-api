@@ -41,6 +41,12 @@ func (t *Tax) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.Validate(
 		&validators.StringIsPresent{Field: t.Name, Name: "Name"},
 		&validators.StringIsPresent{Field: t.TaxCode, Name: "TaxCode"},
+		&validators.StringInclusion{
+			Field:   t.TaxCode,
+			Name:    "TaxCode",
+			List:    []string{"1", "2", "3"},
+			Message: "Invalid tax code",
+		},
 	), nil
 }
 

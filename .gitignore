@@ -12,3 +12,4 @@ taxcalculator-api
 .vscode/
 .grifter/
 .env
+database_data/

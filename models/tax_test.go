@@ -2,6 +2,8 @@ package models
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_Tax(t *testing.T) {
@@ -11,7 +13,6 @@ func Test_Tax(t *testing.T) {
 		Price:   999999,
 	}
 
-	if err := DB.Create(&tax); err != nil {
-		t.Error(err)
-	}
+	err := DB.Create(&tax)
+	assert.Nil(t, err)
 }
