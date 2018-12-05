@@ -1,46 +1,35 @@
-version: '2.1'
+version: '3'
+
 services:
   db:
-    image: postgres:9.6.11
-    volumes:
-      - ./database_data:/var/lib/postgresql/data
-    # networks:
-      # - local
+    image: postgres:10-alpine
+    container_name: taxcalculator_db
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres123
-      - POSTGRES_DB=taxcalculator_api_development
+      POSTGRES_USER: postgres
+      POSTGRES_DB: taxcalculator_api_production
+      POSTGRES_PASSWORD: postgres123
     ports:
       - 5432:5432
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-
+    restart: always
+    # Un-comment the following two lines if you want data to persist across containers
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      
   app:
+    depends_on:
+      - db
     build:
       context: .
-      dockerfile: ./Dockerfile.dev
-    command: buffalo pop migrate && buffalo dev
+      dockerfile: Dockerfile-prod
+    container_name: taxcalculator-api
+    restart: always
+    environment: 
+      - SESSION_SECRET=I8RBTQSKZSIMZ8UTNOKSLPFA
+      - DATABASE_URL=postgres://postgres:postgres123@db:5432/taxcalculator_api_production?sslmode=disable
     ports:
       - 3000:3000
-    volumes:
-      - .:/bin
-    # networks:
-      # - local
-    restart: always
-    environment:
-      - GO_ENV=development
-      - DATABASE_URL=postgres://postgres:postgres123@db/taxcalculator_api_development?sslmode=disable
-    depends_on:
-      db:
-        condition: service_healthy
-    working_dir: /bin
-
-# networks:
-  # local:
+    tty:
+      true
 
 volumes:
-    database_data:
-      driver: local
+  pg-data:
