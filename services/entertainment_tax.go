@@ -9,10 +9,11 @@ type EntertainmentTax struct {
 func NewEntertainmentTax(price float64) *EntertainmentTax {
 	return &EntertainmentTax{
 		TaxItem{
-			Code:       "3",
-			Type:       TypeEntertainment,
-			Refundable: false,
-			Price:      price,
+			Code:         "3",
+			Type:         TypeEntertainment,
+			Refundable:   false,
+			Price:        price,
+			IsCalculated: false,
 		},
 	}
 }
@@ -25,4 +26,5 @@ func (et *EntertainmentTax) Calculate() {
 	}
 	et.TaxAmount = taxAmount
 	et.Subtotal = et.Price + et.TaxAmount
+	et.IsCalculated = true
 }

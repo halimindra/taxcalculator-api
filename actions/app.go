@@ -68,6 +68,8 @@ func App() *buffalo.App {
 		gt.POST("/", tr.Create).Name("taxesPath")
 		gt.PUT("/{tax_id}", tr.Update).Name("taxPath")
 		gt.DELETE("/{tax_id}", tr.Destroy).Name("taxPath")
+
+		app.GET("/bill", BillShow)
 	}
 
 	return app
