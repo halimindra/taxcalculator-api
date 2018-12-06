@@ -7,11 +7,18 @@ import (
 	"github.com/gobuffalo/pop"
 	"github.com/halimindra/taxcalculator-api/models"
 	"github.com/halimindra/taxcalculator-api/utils"
+	"gopkg.in/go-playground/validator.v9"
 )
+
+var validate *validator.Validate
 
 // TaxesResource is the resource for the Tax model
 type TaxesResource struct {
 	buffalo.Resource
+}
+
+func init() {
+	validate = validator.New()
 }
 
 // List gets all Taxes. This function is mapped to the path
@@ -96,7 +103,15 @@ func (v TaxesResource) Create(c buffalo.Context) error {
 	}
 
 	// Validate the data
-	_, err := tx.ValidateAndCreate(tax)
+	err := validate.Struct(tax)
+	if err != nil {
+		return c.Render(
+			http.StatusUnprocessableEntity,
+			r.JSON(utils.NewErrorResponse(err.Error())),
+		)
+	}
+
+	_, err = tx.ValidateAndCreate(tax)
 	if err != nil {
 		return c.Render(
 			http.StatusUnprocessableEntity,
@@ -138,7 +153,16 @@ func (v TaxesResource) Update(c buffalo.Context) error {
 		)
 	}
 
-	_, err := tx.ValidateAndUpdate(tax)
+	// Validate the data
+	err := validate.Struct(tax)
+	if err != nil {
+		return c.Render(
+			http.StatusUnprocessableEntity,
+			r.JSON(utils.NewErrorResponse(err.Error())),
+		)
+	}
+
+	_, err = tx.ValidateAndUpdate(tax)
 	if err != nil {
 		return c.Render(
 			http.StatusUnprocessableEntity,

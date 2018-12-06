@@ -14,9 +14,9 @@ type Tax struct {
 	ID        int                       `json:"id" db:"id"`
 	CreatedAt time.Time                 `json:"-" db:"created_at"`
 	UpdatedAt time.Time                 `json:"-" db:"updated_at"`
-	Name      string                    `json:"name" db:"name"`
-	TaxCode   string                    `json:"tax_code" db:"tax_code"`
-	Price     float64                   `json:"price" db:"price"`
+	Name      string                    `json:"name" db:"name" validate:"required"`
+	TaxCode   string                    `json:"tax_code" db:"tax_code" validate:"required,oneof=1 2 3"`
+	Price     float64                   `json:"price" db:"price" validate:"required"`
 	TaxItem   services.TaxItemInterface `json:"tax_item" db:"-"`
 }
 
@@ -41,12 +41,6 @@ func (t *Tax) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.Validate(
 		&validators.StringIsPresent{Field: t.Name, Name: "Name"},
 		&validators.StringIsPresent{Field: t.TaxCode, Name: "TaxCode"},
-		&validators.StringInclusion{
-			Field:   t.TaxCode,
-			Name:    "TaxCode",
-			List:    []string{"1", "2", "3"},
-			Message: "Invalid tax code",
-		},
 	), nil
 }
 
